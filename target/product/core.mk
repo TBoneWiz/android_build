@@ -22,8 +22,6 @@
 
 PRODUCT_PACKAGES += \
     BasicDreams \
-    Browser \
-    Calendar \
     CalendarProvider \
     CaptivePortalLogin \
     CertInstaller \
@@ -31,8 +29,6 @@ PRODUCT_PACKAGES += \
     DeskClock \
     DocumentsUI \
     DownloadProviderUi \
-    Email \
-    ExactCalculator \
     ExternalStorageProvider \
     FusedLocation \
     InputDevices \
@@ -52,5 +48,10 @@ PRODUCT_PACKAGES += \
     TeleService \
     VpnDialogs \
     MmsService
+
+#    Browser \
+#    Calendar \
+#    Email \
+#    ExactCalculator \
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_base.mk)
