@@ -273,6 +273,11 @@ class EdifyGenerator(object):
     cmd = "delete(" + ",\0".join(['"%s"' % (i,) for i in file_list]) + ");"
     self.script.append(self.WordWrap(cmd))
 
+  def DeleteRecursive(self, startdir):
+    """Delete recursively."""
+    cmd = 'delete_recursive("%s");'
+    self.script.append(self.WordWrap(cmd) % (startdir))
+
   def DeleteFilesIfNotMatching(self, file_list):
     """Delete the file in file_list if not matching the checksum."""
     if not file_list:
