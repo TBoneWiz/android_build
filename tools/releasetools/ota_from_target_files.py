@@ -733,6 +733,11 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
 
+  script.Mount("/system")
+  script.Print("Some cleanup...")
+  script.DeleteRecursive("/system/priv-app/SetupWizard")
+  script.Unmount("/system")
+
   script.ShowProgress(0.2, 10)
   device_specific.FullOTA_InstallEnd()
 
