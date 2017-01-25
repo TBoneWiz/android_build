@@ -100,6 +100,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Override build.prop items with custom vendor init.
       Enabled when TARGET_UNIFIED_DEVICE is defined in BoardConfig
 
+  --default
+      Include all default packages, do not include SuperSU and other
+      optional packages.
+
 """
 
 import sys
@@ -134,6 +138,7 @@ if OPTIONS.worker_threads == 0:
 OPTIONS.two_step = False
 OPTIONS.no_signing = False
 OPTIONS.block_based = False
+OPTIONS.min_set = False
 OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
 OPTIONS.fallback_to_full = True
@@ -561,6 +566,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   has_recovery_patch = HasRecoveryPatch(input_zip)
   block_based = OPTIONS.block_based and has_recovery_patch
+  min_set = OPTIONS.min_set
 
   #if not OPTIONS.omit_prereq:
   #  ts = GetBuildProp("ro.build.date.utc", OPTIONS.info_dict)
@@ -733,28 +739,35 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
 
-  script.Print("Flashing SuperSU Zip...")
-  common.ZipWriteStr(output_zip, "supersu/supersu.zip",
+  if min_set:
+    script.Print("Flashing SuperSU Zip...")
+    common.ZipWriteStr(output_zip, "supersu/supersu.zip",
                  ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
-  script.FlashSuperSU()
+    script.FlashSuperSU()
 
-  script.Mount("/system")
-  script.Print("Some cleanup...")
-  script.DeleteFiles(["/system/addon.d/UPDATE-SuperSU.zip"])
-  script.DeleteRecursive("/system/priv-app/SetupWizard")
-  script.Print("Installing ViPER4Android...")
-  script.DeleteFiles(["/system/priv-app/AudioFX.apk"])
-  script.DeleteFiles(["/system/priv-app/AudioFX/AudioFX.apk"])
-  script.DeleteRecursive("/system/priv-app/AudioFX")
-  script.SetPermissionsRecursive("/system/addon.d", 0, 0, 0o755, 0o755, None, None)
-  script.SetPermissionsRecursive("/system/etc/init.d", 0, 2000, 0o755, 0o750, None, None)
-  script.SetPermissions("/system/addon.d/23-v4a.sh", 0, 0, 0o755, None, None)
-  script.SetPermissions("/system/xbin/seinfo", 0, 0, 0o755, None, None)
-  script.SetPermissions("/system/xbin/sepolicy-inject", 0, 0, 0o755, None, None)
-  script.SetPermissions("/system/xbin/sesearch", 0, 0, 0o755, None, None)
-  script.SetPermissions("/system/etc/init.d/50viper", 0, 2000, 0o755, None, None)
-  script.Print("ViPER4Android installed successfully...")
-  script.Unmount("/system")
+    script.Mount("/system")
+    script.Print("Some cleanup...")
+    script.DeleteFiles(["/system/addon.d/UPDATE-SuperSU.zip"])
+    script.DeleteRecursive("/system/priv-app/SetupWizard")
+    script.Print("Installing ViPER4Android...")
+    script.DeleteFiles(["/system/priv-app/AudioFX.apk"])
+    script.DeleteFiles(["/system/priv-app/AudioFX/AudioFX.apk"])
+    script.DeleteRecursive("/system/priv-app/AudioFX")
+    script.SetPermissionsRecursive("/system/addon.d", 0, 0, 0o755, 0o755, None, None)
+    script.SetPermissionsRecursive("/system/etc/init.d", 0, 2000, 0o755, 0o750, None, None)
+    script.SetPermissions("/system/addon.d/23-v4a.sh", 0, 0, 0o755, None, None)
+    script.SetPermissions("/system/xbin/seinfo", 0, 0, 0o755, None, None)
+    script.SetPermissions("/system/xbin/sepolicy-inject", 0, 0, 0o755, None, None)
+    script.SetPermissions("/system/xbin/sesearch", 0, 0, 0o755, None, None)
+    script.SetPermissions("/system/etc/init.d/50viper", 0, 2000, 0o755, None, None)
+    script.Print("ViPER4Android installed successfully...")
+    script.Unmount("/system")
+
+  else:
+    script.Mount("/system")
+    script.Print("Deleting SetupWizard...")
+    script.DeleteRecursive("/system/priv-app/SetupWizard")
+    script.Unmount("/system")
 
   script.ShowProgress(0.2, 10)
   device_specific.FullOTA_InstallEnd()
@@ -1646,6 +1659,8 @@ def main(argv):
       OPTIONS.verify = True
     elif o == "--block":
       OPTIONS.block_based = True
+    elif o == "--min":
+      OPTIONS.min_set = True
     elif o in ("-b", "--binary"):
       OPTIONS.updater_binary = a
     elif o in ("--no_fallback_to_full",):
@@ -1676,6 +1691,7 @@ def main(argv):
                                  "two_step",
                                  "no_signing",
                                  "block",
+                                 "min",
                                  "binary=",
                                  "oem_settings=",
                                  "verify",

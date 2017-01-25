@@ -1,5 +1,17 @@
 # Put some miscellaneous rules here
 
+# Options (enter before building ROM)
+
+# To build file-based ROM image: export BLOCK_BASED_OTA=false
+
+# To build classic SlimROM: export SLIM_FULL=true
+
+# To build classic SlimROM user build with Superuser:
+#     export SLIM_FULL=true
+#     export WITH_SU=true
+
+# Revert all options to false for default (minimal) build
+
 # Build system colors
 
 ifneq ($(BUILD_WITH_COLORS),0)
@@ -1899,6 +1911,10 @@ ifneq ($(BLOCK_BASED_OTA),false)
     $(INTERNAL_OTA_PACKAGE_TARGET): block_based := --block
 endif
 
+ifneq ($(SLIM_FULL),true)
+    $(INTERNAL_OTA_PACKAGE_TARGET): min_set := --min
+endif
+
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	@echo "$(OTA_FROM_TARGET_SCRIPT)" > $(PRODUCT_OUT)/ota_script_path
 	@echo "$(override_device)" > $(PRODUCT_OUT)/ota_override_device
@@ -1906,6 +1922,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	   $(OTA_FROM_TARGET_SCRIPT) -v \
 	   $(block_based) \
+	   $(min_set) \
 	   -p $(HOST_OUT) \
 	   -k $(KEY_CERT_PAIR) \
 	   --backup=$(backuptool) \

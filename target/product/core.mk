@@ -49,9 +49,13 @@ PRODUCT_PACKAGES += \
     VpnDialogs \
     MmsService
 
-#    Browser \
-#    Calendar \
-#    Email \
-#    ExactCalculator \
+# These packages are excluded from essential build (default)
+ifeq ($(SLIM_FULL),true)
+PRODUCT_PACKAGES += \
+    Browser \
+    Calendar \
+    Email \
+    ExactCalculator
+endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_base.mk)

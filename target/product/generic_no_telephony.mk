@@ -26,10 +26,14 @@ PRODUCT_PACKAGES := \
     SystemUI \
     WallpaperCropper
 
-#    Camera2 \
-#    Gallery2 \
-#    Email \
-#    Exchange2 \
+# These packages are excluded from essential build (default)
+ifeq ($(SLIM_FULL),true)
+PRODUCT_PACKAGES := \
+    Camera2 \
+    Gallery2 \
+    Email \
+    Exchange2
+endif
 
 PRODUCT_PACKAGES += \
     clatd \
