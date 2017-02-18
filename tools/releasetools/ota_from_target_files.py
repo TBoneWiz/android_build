@@ -748,14 +748,19 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Mount("/system")
     script.Print("SuperSU cleanup...")
     script.DeleteFiles(["/system/addon.d/UPDATE-SuperSU.zip"])
+
     script.Print("Flashing BusyBox Zip...")
     common.ZipWriteStr(output_zip, "busybox/busybox.zip",
                  ""+input_zip.read("SYSTEM/addon.d/UPDATE-BusyBox.zip"))
     script.FlashBusyBox()
+
+    script.Mount("/system")
     script.Print("BusyBox cleanup...")
     script.DeleteFiles(["/system/addon.d/UPDATE-BusyBox.zip"])
+
     script.Print("Deleting SetupWizard...")
     script.DeleteRecursive("/system/priv-app/SetupWizard")
+
     script.Print("Installing ViPER4Android...")
     script.DeleteFiles(["/system/priv-app/AudioFX.apk"])
     script.DeleteFiles(["/system/priv-app/AudioFX/AudioFX.apk"])
