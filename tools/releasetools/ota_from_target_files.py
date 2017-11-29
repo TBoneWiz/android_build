@@ -757,6 +757,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Mount("/system")
     script.Print("BusyBox cleanup...")
     script.DeleteFiles(["/system/addon.d/UPDATE-BusyBox.zip"])
+    script.Print("Remove buggy dmesg from ToyBox...")
+    script.DeleteFiles(["/system/bin/dmesg"])
 
     script.Print("Deleting SetupWizard...")
     script.DeleteRecursive("/system/priv-app/SetupWizard")
