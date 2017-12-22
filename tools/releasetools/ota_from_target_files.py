@@ -740,6 +740,14 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.WriteRawImage("/boot", "boot.img")
 
   if min_set:
+    script.Print("Setting SBIN mode for SuperSU...")
+    script.Mount("/system")
+    script.FileCopy("/system/addon.d/supersu", "/data/.supersu")
+    script.DeleteFiles(["/system/addon.d/supersu"])
+    script.Print("Deleting SetupWizard...")
+    script.DeleteRecursive("/system/priv-app/SetupWizard")
+    script.Unmount("/system")
+
     script.Print("Flashing SuperSU Zip...")
     common.ZipWriteStr(output_zip, "supersu/supersu.zip",
                  ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
@@ -757,9 +765,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Mount("/system")
     script.Print("BusyBox cleanup...")
     script.DeleteFiles(["/system/addon.d/UPDATE-BusyBox.zip"])
-
-    script.Print("Deleting SetupWizard...")
-    script.DeleteRecursive("/system/priv-app/SetupWizard")
 
     script.Print("Installing ViPER4Android...")
     script.DeleteFiles(["/system/priv-app/AudioFX.apk"])
