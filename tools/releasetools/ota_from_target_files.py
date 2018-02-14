@@ -776,7 +776,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.SetPermissions("/system/xbin/seinfo", 0, 0, 0o755, None, None)
     script.SetPermissions("/system/xbin/sepolicy-inject", 0, 0, 0o755, None, None)
     script.SetPermissions("/system/xbin/sesearch", 0, 0, 0o755, None, None)
-    script.SetPermissions("/system/etc/init.d/50viper", 0, 2000, 0o755, None, None)
+    script.SetPermissions("/system/etc/init.d/55viper", 0, 2000, 0o755, None, None)
     script.Print("ViPER4Android installed successfully...")
     script.Unmount("/system")
 
