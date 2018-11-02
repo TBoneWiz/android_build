@@ -405,7 +405,7 @@ for changeps in args.change_number:
           cmd = 'cd %s && git fetch %s %s' % (project_path, fetch_url, fetch_ref)
         execute_cmd(cmd)
     # Perform the cherry-pick
-    cmd = 'cd %s && git cherry-pick FETCH_HEAD' % (project_path)
+    cmd = 'cd %s && git cherry-pick --ff FETCH_HEAD' % (project_path)
     if not args.pull:
       execute_cmd(cmd)
     if not args.quiet:
